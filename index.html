@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   
+  
   <title>张玉良的博客</title>
   <meta name="author" content="ZYL" />
 
@@ -33,6 +34,17 @@
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
   
   
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?f0bd57df91f2c37289f7d0a83e9623da";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
 
   
 
@@ -45,6 +57,11 @@
 
 
 <body>
+{
+ <script type="text/javascript" src="/love.js">
+ 
+ </script>
+ 
   <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">张玉良的博客</a></h1>
   <h2><a href="/">记录生活</a></h2>
@@ -54,14 +71,19 @@
     
       <li><a href="/">首页</a></li>
     
-      <li><a href="/archives">文件列表</a></li>
+      <li><a href="/archives">博客列表</a></li>
     
-      <li><a href="/contact">关于</a></li>
+      <li><a href="/project">我的项目</a></li>
+    
+      <li><a href="/contact">联系我</a></li>
     
   </ul>
   <div class="clearfix"></div>
 </nav>
-<div class="clearfix"></div></header>
+<div class="clearfix"></div>
+  
+  </header>
+  
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
   <article class="post">
@@ -70,144 +92,28 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2020-04-24T03:39:24.000Z"><a href="/2020/04/24/my-first-text/">2020-04-24</a></time>
+        <time datetime="2020-04-24T03:39:24.000Z"><a href="/2020/04/24/my-first-blog/">2020-04-24</a></time>
       
       
   
-    <h1 class="title"><a href="/2020/04/24/my-first-text/">my first text</a></h1>
+    <h1 class="title"><a href="/2020/04/24/my-first-blog/">my first blog</a></h1>
   
 
     </header>
     <div class="entry">
       
         <p>苦于金钱与网盘限速的逼迫，自己研究网络文件传输协议，进行自主服务器搭建，用以文件分享。</p>
+<p>（着急的同学：如果没有公网IP，就不要看了，没有公网IP，不通过软件是没法实现传输的）</p>
 <p>首先讲解FTP文件传输协议：</p>
 <p>​    FTP（File Transfer Protocol，文件传输协议） 是 TCP/IP 协议组中的协议之一。简单的讲就是规定好的一种通用的传输文件的方法。在开发网站的时候，通常利用FTP协议把网页或程序传到Web服务器上。那么有趣的来了，如果两台电脑一台打开ftp，另一台不就可以直接通过网络访问文件了吗。而且，小范围内的使用不久相当于百度网盘类似了吗，而且不收费。事实却实是这样。那就搞一搞。较为详细的介绍<a href="https://blog.csdn.net/qq_22238021/article/details/80281163" target="_blank" rel="noopener">https://blog.csdn.net/qq_22238021/article/details/80281163</a></p>
-<p>​    <strong>基于win10 1909：</strong></p>
-<p>win10默认FTP服务是关闭的，下面开始造作。</p>
-<ol>
-<li>控制面板–&gt;程序–&gt;启用或关闭windows功能–&gt;点击internet information services前的方块，如下</li>
-</ol>
-<p><img src="/2020/04/24/my-first-text/image-20200304155729668.png" alt="image-20200304155729668"></p>
-<p>重启后你已经开启了，windows下的FTP服务，并且使用IIS管理服务器</p>
-<ol start="2">
-<li><p>计算机右键–&gt;管理–&gt;本地用户和组–&gt;用户–&gt;右键创建新用户。名字密码随便，记住就可以!</p>
-<p><img src="/2020/04/24/my-first-text/image-20200304160301891.png" alt="image-20200304160301891"></p>
-</li>
-</ol>
-<p>创建用户是为了登陆时区别于你登陆的用户，也是为了限制权限。当然也可以不创建，直接使用你的账户登陆，当然权限会高，比较不安全。这里一定注意一点，创建的新用户一定要登陆一次，也就是切换账户，否则新建的用户是处于未开启状态，没法通过FTP登陆。在这里饶了一小圈，怎么也登陆不了新建用户，后来发现是新用户直接是未开启。</p>
-<ol start="3">
-<li><p>继续当前界面–&gt;服务和应用程序–&gt;Internet information service 双击</p>
-<p><img src="/2020/04/24/my-first-text/image-20200304161700742.png" alt="image-20200304161700742"></p>
-</li>
-<li><p>在链接一栏右键添加FTP站点</p>
-</li>
-</ol>
-<p><img src="/2020/04/24/my-first-text/image-20200304161803278.png" alt="image-20200304161803278"></p>
-<ol start="5">
-<li>名称随便 物理路径 就是你存放共享文件的地方，暂时缩小当前窗口</li>
-<li>开CMD指令窗口（win+R–&gt;输入cmd  回车）</li>
-</ol>
-<p><img src="/2020/04/24/my-first-text/image-20200304162102358.png" alt="image-20200304162102358"></p>
-<p>输入 ipconfig </p>
-<p><img src="/2020/04/24/my-first-text/image-20200304162337426.png" alt="image-20200304162337426"></p>
-<p>找到自己的IP地址</p>
-<ol start="7">
-<li><p>回到之前界面，选择自己的IP地址<img src="/2020/04/24/my-first-text/image-20200304163217602.png" alt="image-20200304163217602"></p>
-</li>
-<li><p>下一步，如果需要账户登陆，请按照下面的图片设置</p>
-<p><img src="/2020/04/24/my-first-text/image-20200304163320392.png" alt="image-20200304163320392"></p>
-</li>
-</ol>
-<p>完成即可。此时已经搭建完成局域网的 FTP服务，也就是必须在同一个网络或者WiFi下才能访问</p>
-<p>打开浏览器，输入ftp://你的IP地址</p>
-<p><img src="/2020/04/24/my-first-text/image-20200304163525970.png" alt="image-20200304163525970"></p>
-<p>出现如上界面表示成功搭建局域网FTP服务器。</p>
-<p><strong>如果出现无法访问：</strong></p>
-<ol>
-<li>检查输入格式是否正确    <a href="ftp://ip地址">ftp://ip地址</a>   注意是ftp不是http。</li>
-<li>检查配置过程是否正确，ip地址是否正确，如果有安装虚拟机会出现多个IP地址，一定找到ipv4的IP地址。</li>
-<li>检查两个机器是否在同一网络下</li>
-</ol>
-<p><strong>如果出现输入账户密码无限次输入：</strong>（此情况说明服务器已经搭建，但是账户不对）</p>
-<ol>
-<li>首先确认新建立的用户已经用电脑登陆过，将一些新用户的配置已经配置好。这点笔者吃了很大的亏，偶然登陆新账户时才发现，不登陆的话系用户相当于未开启状态，因此无法登陆，也就是账户密码不对，重新输入。</li>
-<li>一般上步注意了就不会再有问题，若不行，输入自己使用的账户和密码（前提是在前面第8步配置时选择所有用户）试试，如果不行检查上图第8步的用户是否选择所有用户或者指定用户。</li>
-</ol>
-<p>到这里此时半只脚进门，剩下的是最坑的。当你用手机流量访问这个地址，发现无法访问，原因是，上面只是搭建局域网，而非公网的服务器。想搭建公网下的服务器，要先过Windows的防火墙这一步，在防火墙上，笔者也栽了大跟头，具体设置如下（Win10 1909版本）。</p>
-<ol>
-<li><p>控制面板–&gt;系统和安全–&gt;windows defender防火墙–&gt;允许应用或功能通过Windows defender 防火墙–&gt;更改设置–&gt;找到FTP服务器，全打上对勾</p>
-<p><img src="/2020/04/24/my-first-text/image-20200308182529711.png" alt="image-20200308182529711"></p>
-</li>
-<li><p>控制面板–&gt;系统和安全–&gt;windows defender防火墙–&gt;高级设置–&gt;入站出站规则关于FTP的都右键启用</p>
-<p><img src="/2020/04/24/my-first-text/image-20200308183750942.png" alt="image-20200308183750942"></p>
-</li>
-</ol>
-<p>当然如果嫌麻烦，可以直接将防火墙关掉。具体步骤可百度。</p>
-<p>下面就是将内网也就是局域网和外网也就是公网链接起来，链接方式有两种</p>
-<ol>
-<li><p>借助路由器的NAT映射功能，这个功能在一般的路由器中都有，下面以华为WS832为例</p>
-<p><img src="/2020/04/24/my-first-text/image-20200308184440811.png" alt="image-20200308184440811"></p>
-</li>
-</ol>
-<p>添加端口映射，就是将内网的IP于外网的IP进行映射，访问外网的IP端口时，路由器会自动转到内网的相应的IP地址，这样实现内网的渗透。具体使用方式，在上图点开的页面帮助阐述的非常明确，这里不多说，其他品牌路由器在百度也有相应教程</p>
-<p><img src="/2020/04/24/my-first-text/image-20200308185334984.png" alt="image-20200308185334984"></p>
-<ol start="2">
-<li>借助第三方软件如serve-u 或者花生壳等实现内网的渗透使用方式百度有很多教程，这里不累赘，简单方便，但是最明显的缺点是，提高速度需要花钱。穷逼的笔者还是继续选择研究路由器映射。但是映射也不是这么简单，还有很多坑，具体的坑等笔者将坑完全填完后再更新，否则50元买的设备不能浪费了。当然还在七天无理由，但是不想做退货党。</li>
-</ol>
-
       
     </div>
     
     <footer>
-        <div class="alignright">
-          
-          <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
-        </div>
-        
-        
-        <!-- partial('post/share') -->
-      <div class="clearfix"></div>
+      <div class="alignleft">
+        <a href="/2020/04/24/my-first-blog/#more" class="more-link">More</a>
+      </div>
     </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2020-04-23T14:07:14.602Z"><a href="/2020/04/23/hello-world/">2020-04-23</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2020/04/23/hello-world/">Hello World</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
     
     <footer>
         <div class="alignright">
@@ -238,8 +144,12 @@
     <input type="hidden" name="q" value="site:www.zhangyuliang.vip">
   </form>
 </div>
+  
+ 
 
   
+  
+ 
 
   
 <div class="widget tag">
@@ -247,23 +157,30 @@
   <ul class="entry">
     
       <li>
-        <a href="/2020/04/24/my-first-text/">my first text</a>
-      </li>
-    
-      <li>
-        <a href="/2020/04/23/hello-world/">Hello World</a>
+        <a href="/2020/04/24/my-first-blog/">my first blog</a>
       </li>
     
   </ul>
 </div>
 
+  
+ 
 
   
+  
+ 
 
   
+  
+ 
+
+
+ <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=336 height=80 src="//music.163.com/outchain/player?type=2&id=1299293129&auto=1&height=66"></iframe>
+
 </aside>
     <div class="clearfix"></div>
   </div>
+  
   <footer id="footer" class="inner"><div class="alignleft">
   <p>
   
@@ -272,9 +189,18 @@
   All rights reserved.</p>
   <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
 </div>
-<div class="clearfix"></div>
 
-<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script></footer>
+<div class="clearfix">
+
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+  
+  </footer>
   <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
