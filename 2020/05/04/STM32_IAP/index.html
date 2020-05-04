@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  
+  <title>my first blog | 张玉良的博客</title>
+  <meta name="author" content="ZYL" />
+
+  
+  <meta name="description" content="点点滴滴" />
+  
+
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <meta property="og:title" content="my first blog" />
+  <meta property="og:site_name" content="张玉良的博客" />
+
+  
+  
+
+  
+    <meta property="og:image" content="" />
+  
+
+  
+  <link href="/css/images/favicon.ico" rel="icon" />
+  
+
+  <link rel="alternate" href="/atom.xml" title="张玉良的博客" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+  
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?f0bd57df91f2c37289f7d0a83e9623da";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+  
+
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+  
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+
+<body>
+{
+ <script type="text/javascript" src="/love.js">
+ 
+ </script>
+ 
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">张玉良的博客</a></h1>
+  <h2><a href="/">记录生活</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">博客列表</a></li>
+    
+      <li><a href="/project">我的项目</a></li>
+    
+      <li><a href="/contact">联系我</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+  
+  </header>
+  
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2020-05-04T03:39:24.000Z"><a href="/2020/05/04/STM32_IAP/">2020-05-04</a></time>
+      
+      
+  
+    <h1 class="title">my first blog</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>​        最近项目中想加入IAP远程在线升级，研究一番后，发现网上讲解的较多。其中正点原子的将视频讲解的非常详细，非常感谢正点原子的教程。</p>
+<p>​        但是</p>
+<p>​        但是</p>
+<p>​        但是！！！划重点了</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C1.png" alt="1"></p>
+<p>​        网上的教程大部分是将bootloader程序放到flash的开始部分，然后hex文件烧写完成后，跳转到指定位置运行。这样让我产生一个疑问—&gt;我将程序通过串口烧写后成功运行，如果我按下复位键，那么程序会跳转到存在前面的bootloader区，你需要在bootloader里设置检测是否升级。如果不升级，则再跳转到app区运行。这样不是多此一举吗。而且对于既想插线调试程序又想远程调试的程序员非常不友好。所以我就思考……  <a id="more"></a></p>
+<p>​        所以我就思考，为什么不能将APP区放到flash前面，将bootloader程序放到flash的较靠后的位置。这样一来，我按下复位键是直接运行app程序。而只有触发了升级条件时才跳转到bootloader区进行数据接收，接受完成后，软件复位，自动跳转到app区。而且这样最大的一个好处是，一旦bootloader写好后可以下载到flash后面固定的存储区内，通过stlink或者其他在线调试工具烧写时，只擦除前面的app区，bootloader就不会发生改变。对于插线调试的程序员来说，可以直接忽略bootloader的存在，这样岂不是美哉。话不多说，下面就以STM32F103VE 和MDK来尽行介绍，如何实现。</p>
+<p>​        (当然，如果想最快速度了解我的思想，还是先看懂网上的IAP升级顺序，建议看原子的视频讲解)</p>
+<p>​        STM32F103VE是512KB的flash</p>
+<p>​        偏移地址从0x00000到0x80000</p>
+<p>​        这里我以一个简单的电灯程序来介绍。</p>
+<p>​        总体思路：</p>
+<p>1.将led闪烁的程序（也就是APP）下载到0x00000到0x10000（64K）区域。实际大小选择根据自己代码的大小设置。（如何查看代码大小，在后面介绍）</p>
+<p>2.将bootloader程序（也就是升级引导程序）下载到0x70000到0x7FFFF（64K）区域。实际大小原理同上。</p>
+<p>3.在app程序里设置触发升级的机制，我这里用的延时</p>
+<p>4.在bootloader中用按键进行软件复位跳转到app区，验证软件复位可行性。</p>
+<p>具体实践：</p>
+<p>1.首先了解几个MDK的设置</p>
+<p>​        设置程序下载的位置：</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C2.png" alt="2"></p>
+<p>图片很容易理解，0x8020000为起始下载地址，size为程序区的大小，这里为了方便写，直接设置为0x10000，也就是64KB。</p>
+<p>​        设置芯片擦除选项</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C3.png" alt="3"></p>
+<p>这个Erase Sectors为擦除选择，是整片擦除还是擦除选择的区域。这里要选择擦除选择区域，这样每次下载只会擦除从0x8020000到0x8030000的区域，其他的区域是不会擦除的。这样就能保存bootloader的程序不被影响了。</p>
+<p>2.你需要了解STM32的中断向量表，这个网上有很多资料，这里不再多说。</p>
+<p>了解完这些就可以开始了。</p>
+<p>由于懒惰，这里就借用一下原子的库里面的程序跳转。（说明，由于板子是自己做的，资源跟原子例程不搭，所以这里只借用跳转程序。也就是拿原子的IAP bootloader程序作为app程序，延时三秒后跳转后面的程序）。用我的工程程序作为bootloader程序点亮led灯，并且按键按下后软件复位，进入app，延时三秒后，又进入bootloader点亮led灯。这样循环。这就是成功的现象。</p>
+<p>一.首先下载app程序：</p>
+<p>其他的都屏蔽，只加三秒延时：</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C4.png" alt="4"></p>
+<p>只留程序跳转，其他屏蔽</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C5.png" alt="5"></p>
+<p>跳转地址改好后面我要下载的地址</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C6.png" alt="6"></p>
+<p>设置好app程序的起始地址</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C7.png" alt="7"></p>
+<p>下载完成。</p>
+<p>二.下载bootloader程序（这里用led暂代bootloader，因为bootloader我还没写，验证成功就第一时间来和你们分享了）</p>
+<p>工程只留一个led，其他屏蔽</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C8.png" alt="8"></p>
+<p>设置好起始地址，一定要和前面的跳转地址一样，否则肯定跳转不过来</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C9.png" alt="9"></p>
+<p>检测到按键按下，实行软件复位</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C10.png" alt="10"></p>
+<p>赠送软件复位程序，用的官方库函数</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@brief</span>  Reset the mcu by software</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  none</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@note</span>   use the 3.5 version of the firmware library. </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">void</span> SoftReset(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    __set_FAULTMASK(<span class="number">1</span>); <span class="comment">// 关闭所有中断</span></span><br><span class="line">    NVIC_SystemReset(); <span class="comment">// 复位</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>同样设置好擦除区域后就可以下载了。</p>
+<p>下载完成后就是见证奇迹的时刻，按下复位按钮，等待三秒，LED成功闪烁起来，说明跳转成功，而且是先运行了app区里的延时，再跳转过去的。按键按下，等待三秒后再次亮起，说明软件复位成功。这样就成了无论怎么复位都是优先运行app区了。这样防止小白用户复位后先进入bootloader里了。</p>
+<p>当然需要注意的是，存在后面的程序中断向量表也要便宜，具体设置如图</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在systeminit()中有个SCB-&gt;VTOR = FLASH_BASE | <span class="type">VECT_TAB_OFFSET</span>;</span><br><span class="line">VECT_TAB_OFFSET原程序定义为<span class="number">0</span>，这里需要改成和你程序偏移量一样就可以了</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C11.png" alt="11"></p>
+<p>具体偏移多少，根据自己的工程来</p>
+<p><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C12.png" alt="12"></p>
+<p>最后附一张效果图：<br><img src="/2020/05/04/STM32_IAP/.%5CSTM32_IAP%5C13.jpg" alt="13"></p>
+<p>学会的小伙伴可以尽情的去改你的app和bootloader了。</p>
+
+      
+    </div>
+    
+    <footer>
+        <div class="alignright">
+          
+          <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
+        </div>
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/STM32IAP与众不同/">STM32IAP与众不同</a>
+  </div>
+
+        <!-- partial('post/share') -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:www.zhangyuliang.vip">
+  </form>
+</div>
+  
+ 
+
+  
+  
+ 
+
+  
+<div class="widget tag">
+  <h3 class="title">Recent Posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2020/05/04/STM32_IAP/">my first blog</a>
+      </li>
+    
+      <li>
+        <a href="/2020/04/24/my-first-blog/">my first blog</a>
+      </li>
+    
+  </ul>
+</div>
+
+  
+ 
+
+  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/STM32IAP与众不同/">STM32IAP与众不同</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+  
+ 
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">Tag Cloud</h3>
+  <div class="entry">
+    <a href="/tags/STM32IAP%E4%B8%8E%E4%BC%97%E4%B8%8D%E5%90%8C/" style="font-size: 10px;">STM32IAP与众不同</a>
+  </div>
+</div>
+
+  
+ 
+
+
+ <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=336 height=80 src="//music.163.com/outchain/player?type=2&id=1299293129&auto=1&height=66"></iframe>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  
+  <footer id="footer" class="inner"><div class="alignleft">
+  <p>
+  
+  &copy; 2020 ZYL
+  
+  All rights reserved.</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</div>
+
+<div class="clearfix">
+
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+  
+  </footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<div id='bg'></div>
+  
+
+  
+</body>
+</html>
+
+
