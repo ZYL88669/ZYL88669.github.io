@@ -106,7 +106,7 @@ var _hmt = _hmt || [];
 <p>​        然而又经过一下午的研究，脑洞又风暴了一下。还就真让我找到了办法。</p>
 <p>​        首先我想，能不能接受bin数据直接存到运行程序的flash中而跳过缓存，那样不久可以将剩下的400K全部放程序了吗。本想用固定的32字节或64字节调用一次flash写入，但是担心频繁读写会对flash有影响，毕竟一个很简单的程序就要传输几十万个数据，这样算下来，升级一次，flash就要折寿很多，况且每次写入都要检查，运行效率比较低。这也是一个可行的办法，但是考虑稳定性，就没继续研究。</p>
 <p>​        然后我想，每次接收都是放到一个buf里，能不能这个buf地址就是程序存放的起始地址。就搜索一下，还真有给数组添加固定存储位置的方法。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">uint8_t</span> APP_BUF[APP_CODE_LEN] __attribute__((at(<span class="number">0X08000000</span>)));</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uint8_t</span> APP_BUF[APP_CODE_LEN] __attribute__((at(<span class="number">0X08000000</span>)));</span><br></pre></td></tr></table></figure>
 
 <p>这就是将数组APP_BUF的存储地址放到0x08000000，看到这相信有了解IAP升级的小伙伴快要知道我要干啥了。</p>
 <p>​        没错，我就是把这个数组放到flash的起始段，只要我串口接到一个bin数据并经简单处理后，就直接存入这个数组的相应位置（中断中APP_BUF[i]=Res;i++;）。这样来一个接一个，就不需要缓存了，剩下的400K全都可以存升级的数据。完美啊，我真是太有菜了。想到这里，马上赶紧试一下（虽然已经深夜，奈何控制不住激动的心情，不试一下睡不着觉）。</p>
