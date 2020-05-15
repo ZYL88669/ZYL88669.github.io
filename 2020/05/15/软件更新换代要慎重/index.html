@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   
   
-  <title>Archives: 2020/5 | 张玉良的博客</title>
+  <title>软件更新换代要慎重 | 张玉良的博客</title>
   <meta name="author" content="ZYL" />
 
   
@@ -15,7 +15,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  
+  <meta property="og:title" content="软件更新换代要慎重" />
   <meta property="og:site_name" content="张玉良的博客" />
 
   
@@ -85,49 +85,48 @@ var _hmt = _hmt || [];
   </header>
   
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-<h2 class="archive-title">2020/5</h2>
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2020-05-15T12:11:11.000Z"><a href="/2020/05/15/软件更新换代要慎重/">2020-05-15</a></time>
+      
+      
+  
+    <h1 class="title">软件更新换代要慎重</h1>
+  
 
+    </header>
+    <div class="entry">
+      
+        <p>​        本人有个非常坏的习惯，喜欢更新。但是今天真是认识到了软件更新的慎重性。特别是软件工程师，环境真的是太重要了。网上更是见到一些认识更为深刻的程序开发人员，他们都不敢关机</p>
+<p>，生怕关机第二天环境就变了。。。。。</p>
+<p>​        今天改了一份上个程序员留下的程序，由于用了较新的MDK5.29，编译全部通过，但是运行起来就是不正常。一点一点的调试，找问题，终于找到了所谓的BUG</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> config_f=<span class="number">0</span>;</span><br><span class="line"><span class="comment">/*初始化后，当我再次在程序里调用的时候，发现config_f根本不是0，而是一个很大的数。当然了调用的地方有点特殊，在定时器中断里调用。真的是神奇中的神奇，后来和老师研究一番后觉得是内存没有对齐的原因，因为之前编写的时候是MDK5.05，而这次使用5.29对变量的存储方式可能有所升级*/</span></span><br></pre></td></tr></table></figure>
 
-  <div class="archive">
+<p>不管怎么样吧问题是找到了，但是也花费了不少时间。以后升级版本前一定要注意更新的内容。</p>
+<p>另外使用亿百特的WiFi模块E103 IPEX时要注意信号问题，自带的陶瓷天线很差劲，一点点阻挡就没有信号，我还一直以为是配置的问题。</p>
+
+      
+    </div>
     
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2020-05-15T12:11:11.000Z"><a href="/2020/05/15/软件更新换代要慎重/">2020-05-15</a></time>
-            
-              <h1 class="title"><a href="/2020/05/15/软件更新换代要慎重/">软件更新换代要慎重</a></h1>
-            
-          </header>
+    <footer>
+        <div class="alignright">
+          
+          <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
         </div>
-      </article>
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2020-05-04T17:20:28.000Z"><a href="/2020/05/05/STM32-IAP-数组升级法/">2020-05-05</a></time>
-            
-              <h1 class="title"><a href="/2020/05/05/STM32-IAP-数组升级法/">STM32_IAP_数组升级法</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
-      <article class="post">
-        <div class="post-content">
-          <header>
-            <div class="icon"></div>
-            <time datetime="2020-05-04T06:05:12.000Z"><a href="/2020/05/04/STM32-IAP/">2020-05-04</a></time>
-            
-              <h1 class="title"><a href="/2020/05/04/STM32-IAP/">STM32_IAP</a></h1>
-            
-          </header>
-        </div>
-      </article>
-    
+        
+        
+        <!-- partial('post/share') -->
+      <div class="clearfix"></div>
+    </footer>
   </div>
+</article>
+
+
+
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
