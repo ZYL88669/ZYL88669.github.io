@@ -92,23 +92,21 @@ var _hmt = _hmt || [];
     <header>
       
         <div class="icon"></div>
-        <time datetime="2020-05-15T12:11:11.000Z"><a href="/2020/05/15/软件更新换代要慎重/">2020-05-15</a></time>
+        <time datetime="2020-05-18T14:09:29.000Z"><a href="/2020/05/18/STM32-Flash/">2020-05-18</a></time>
       
       
   
-    <h1 class="title"><a href="/2020/05/15/软件更新换代要慎重/">软件更新换代要慎重</a></h1>
+    <h1 class="title"><a href="/2020/05/18/STM32-Flash/">STM32_Flash</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>​        本人有个非常坏的习惯，喜欢更新。但是今天真是认识到了软件更新的慎重性。特别是软件工程师，环境真的是太重要了。网上更是见到一些认识更为深刻的程序开发人员，他们都不敢关机</p>
-<p>，生怕关机第二天环境就变了。。。。。</p>
-<p>​        今天改了一份上个程序员留下的程序，由于用了较新的MDK5.29，编译全部通过，但是运行起来就是不正常。一点一点的调试，找问题，终于找到了所谓的BUG</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> config_f=<span class="number">0</span>;</span><br><span class="line"><span class="comment">/*初始化后，当我再次在程序里调用的时候，发现config_f根本不是0，而是一个很大的数。当然了调用的地方有点特殊，在定时器中断里调用。真的是神奇中的神奇，后来和老师研究一番后觉得是内存没有对齐的原因，因为之前编写的时候是MDK5.05，而这次使用5.29对变量的存储方式可能有所升级*/</span></span><br></pre></td></tr></table></figure>
-
-<p>不管怎么样吧问题是找到了，但是也花费了不少时间。以后升级版本前一定要注意更新的内容。</p>
-<p>另外使用亿百特的WiFi模块E103 IPEX时要注意信号问题，自带的陶瓷天线很差劲，一点点阻挡就没有信号，我还一直以为是配置的问题。</p>
+        <p>​        工程中遇到一个flash的问题：读取flash中的数据会导致后面的延时失效。</p>
+<p>网上搜索也有遇到相同问题的小伙伴 <a href="http://www.openedv.com/forum.php?mod=viewthread&amp;tid=107089&amp;page=1&amp;extra=但是没有人说出个所以然，今天遇到相同的问题后，进行一点点的尝试后发现了问题的根源所在。" target="_blank" rel="noopener">http://www.openedv.com/forum.php?mod=viewthread&amp;tid=107089&amp;page=1&amp;extra=但是没有人说出个所以然，今天遇到相同的问题后，进行一点点的尝试后发现了问题的根源所在。</a></p>
+<p>​        出现这个问题的原因是在读取数据之前没有进行过flash的写入操作。通俗点就是，你没动过flash而直接读取是不行的。只要写入一次数据后，就可以任意的读了，不管写入的啥，只要有一次写入操作后，就不会出现延时失效的问题了。当然，为啥空白芯片必须先写入才能读取，我也不知道为啥。可能是相关的寄存器需要操作才能打开flash，感觉就像串口中的读取SR和DR寄存器会自动清除中断差不多。</p>
+<p><img src="/2020/05/18/STM32-Flash/1.png" alt="1"></p>
+<p>​        具体原因还需要进一步查阅手册，才能找到。</p>
 
       
     </div>
@@ -134,7 +132,7 @@ var _hmt = _hmt || [];
 <nav id="pagination">
   
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
   </nav>
 
 </nav>
@@ -157,6 +155,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">Recent Posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2020/05/18/STM32-Flash/">STM32_Flash</a>
+      </li>
     
       <li>
         <a href="/2020/05/15/软件更新换代要慎重/">软件更新换代要慎重</a>

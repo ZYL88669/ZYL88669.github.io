@@ -92,34 +92,23 @@ var _hmt = _hmt || [];
     <header>
       
         <div class="icon"></div>
-        <time datetime="2020-05-04T17:20:28.000Z"><a href="/2020/05/05/STM32-IAP-数组升级法/">2020-05-05</a></time>
+        <time datetime="2020-05-15T12:11:11.000Z"><a href="/2020/05/15/软件更新换代要慎重/">2020-05-15</a></time>
       
       
   
-    <h1 class="title"><a href="/2020/05/05/STM32-IAP-数组升级法/">STM32_IAP_数组升级法</a></h1>
+    <h1 class="title"><a href="/2020/05/15/软件更新换代要慎重/">软件更新换代要慎重</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>​        今天研究了一天的，IP在线升级。上个博客介绍到突发奇想，将bootloader程序放到app程序后面，解决硬件复位首先运行bootloader程序的问题。但是这样还是有个问题就是，串口或者其他方式接收bin文件数据后，要先放到一个缓存里，然后经过STM32的flash拷贝，将缓存的app放到flash中然后开始运行。这个缓存可是让我难受坏了，因为芯片就512K的flash，除去100K的bootloader程序，还剩400K，如果缓存到flash里，那么只能是平分，也就是程序最大200K。大于200K，就会缓存不开，无法升级。</p>
-<p>​        然而又经过一下午的研究，脑洞又风暴了一下。还就真让我找到了办法。</p>
-<p>​        首先我想，能不能接受bin数据直接存到运行程序的flash中而跳过缓存，那样不久可以将剩下的400K全部放程序了吗。本想用固定的32字节或64字节调用一次flash写入，但是担心频繁读写会对flash有影响，毕竟一个很简单的程序就要传输几十万个数据，这样算下来，升级一次，flash就要折寿很多，况且每次写入都要检查，运行效率比较低。这也是一个可行的办法，但是考虑稳定性，就没继续研究。</p>
-<p>​        然后我想，每次接收都是放到一个buf里，能不能这个buf地址就是程序存放的起始地址。就搜索一下，还真有给数组添加固定存储位置的方法。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uint8_t</span> APP_BUF[APP_CODE_LEN] __attribute__((at(<span class="number">0X08000000</span>)));</span><br></pre></td></tr></table></figure>
+        <p>​        本人有个非常坏的习惯，喜欢更新。但是今天真是认识到了软件更新的慎重性。特别是软件工程师，环境真的是太重要了。网上更是见到一些认识更为深刻的程序开发人员，他们都不敢关机</p>
+<p>，生怕关机第二天环境就变了。。。。。</p>
+<p>​        今天改了一份上个程序员留下的程序，由于用了较新的MDK5.29，编译全部通过，但是运行起来就是不正常。一点一点的调试，找问题，终于找到了所谓的BUG</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> config_f=<span class="number">0</span>;</span><br><span class="line"><span class="comment">/*初始化后，当我再次在程序里调用的时候，发现config_f根本不是0，而是一个很大的数。当然了调用的地方有点特殊，在定时器中断里调用。真的是神奇中的神奇，后来和老师研究一番后觉得是内存没有对齐的原因，因为之前编写的时候是MDK5.05，而这次使用5.29对变量的存储方式可能有所升级*/</span></span><br></pre></td></tr></table></figure>
 
-<p>这就是将数组APP_BUF的存储地址放到0x08000000，看到这相信有了解IAP升级的小伙伴快要知道我要干啥了。</p>
-<p>​        没错，我就是把这个数组放到flash的起始段，只要我串口接到一个bin数据并经简单处理后，就直接存入这个数组的相应位置（中断中APP_BUF[i]=Res;i++;）。这样来一个接一个，就不需要缓存了，剩下的400K全都可以存升级的数据。完美啊，我真是太有菜了。想到这里，马上赶紧试一下（虽然已经深夜，奈何控制不住激动的心情，不试一下睡不着觉）。</p>
-<p>​        由于时间原因就做了个简单测试，首先设置一个app程序，还是用简单的点灯程序，设置好启动地址等。<img src="/2020/05/05/STM32-IAP-%E6%95%B0%E7%BB%84%E5%8D%87%E7%BA%A7%E6%B3%95/1.png" alt="1"></p>
-<p>生成bin文件，由于MDK生成bin文件需要设置，网上有教程，这里不多说。</p>
-<p>由于bootloader程序还没来得及写，这里就将bin文件转成十六进制的数组元素，放到bootloader程序里，bootloader程序下载到靠后的flash里。初始化时会把数组里的app数据存储到flash，如果程序正确运行那么说明，数组存储程序的方法是可行的。那么我的IAP也就可以按照前面设想的那样使用所有的存储空间了。</p>
-<p><img src="/2020/05/05/STM32-IAP-%E6%95%B0%E7%BB%84%E5%8D%87%E7%BA%A7%E6%B3%95/2.png" alt="2"></p>
-<p><img src="/2020/05/05/STM32-IAP-%E6%95%B0%E7%BB%84%E5%8D%87%E7%BA%A7%E6%B3%95/3.png" alt="3"></p>
-<p>数据有点多，没事，见证奇迹的时候就要到了。</p>
-<p>设置好bootloader地址，当然注意向量表偏移，上篇中有介绍，然后就可以下载了。实验现象成功，按照我前面那个程序写的那样，led闪烁。</p>
-<p>​        综上：数组映射flash地址的方案是可行的，这样就可以肆无忌惮的远程升级程序了。</p>
-<p>网上搜索一番，还没人这样用过，我可能是开天辟地第一个这样IAP升级的人（/骄傲）。当然也有可能是我没搜索到而已。不管怎么样，经过一番头脑风暴，解决一个个存在的问题，就是我最快乐的时候。虽然现在已经是半夜一点多，还是很乐意在这写，因为真的很兴奋。</p>
-<p>可能图片显示不全，应该是中文的原因，没关系，图片就是展示一下程序，主要思想都在字里了。</p>
+<p>不管怎么样吧问题是找到了，但是也花费了不少时间。以后升级版本前一定要注意更新的内容。</p>
+<p>另外使用亿百特的WiFi模块E103 IPEX时要注意信号问题，自带的陶瓷天线很差劲，一点点阻挡就没有信号，我还一直以为是配置的问题。</p>
 
       
     </div>
@@ -145,7 +134,7 @@ var _hmt = _hmt || [];
 <nav id="pagination">
   
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
   </nav>
 
 </nav>
@@ -168,6 +157,10 @@ var _hmt = _hmt || [];
 <div class="widget tag">
   <h3 class="title">Recent Posts</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2020/05/18/STM32-Flash/">STM32_Flash</a>
+      </li>
     
       <li>
         <a href="/2020/05/15/软件更新换代要慎重/">软件更新换代要慎重</a>

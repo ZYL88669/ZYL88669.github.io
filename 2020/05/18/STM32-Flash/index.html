@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   
   
-  <title>张玉良的博客</title>
+  <title>STM32_Flash | 张玉良的博客</title>
   <meta name="author" content="ZYL" />
 
   
@@ -15,7 +15,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  
+  <meta property="og:title" content="STM32_Flash" />
   <meta property="og:site_name" content="张玉良的博客" />
 
   
@@ -85,25 +85,27 @@ var _hmt = _hmt || [];
   </header>
   
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="page">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
       
+        <div class="icon"></div>
+        <time datetime="2020-05-18T14:09:29.000Z"><a href="/2020/05/18/STM32-Flash/">2020-05-18</a></time>
+      
       
   
-    <h1 class="title"></h1>
+    <h1 class="title">STM32_Flash</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>QQ:1842123267</p>
-<p><img src="/contact/qrcode_1587706587716.jpg" alt="qrcode_1587706587716"></p>
-<p>Emil：<a href="mailto:1842123267@qq.com">1842123267@qq.com</a></p>
-<p>WeChat:Z2188669</p>
-<p><img src="/contact/mmqrcode1587706640258.png" alt="mmqrcode1587706640258"></p>
-<p>Phone: 15695450858</p>
+        <p>​        工程中遇到一个flash的问题：读取flash中的数据会导致后面的延时失效。</p>
+<p>网上搜索也有遇到相同问题的小伙伴 <a href="http://www.openedv.com/forum.php?mod=viewthread&amp;tid=107089&amp;page=1&amp;extra=但是没有人说出个所以然，今天遇到相同的问题后，进行一点点的尝试后发现了问题的根源所在。" target="_blank" rel="noopener">http://www.openedv.com/forum.php?mod=viewthread&amp;tid=107089&amp;page=1&amp;extra=但是没有人说出个所以然，今天遇到相同的问题后，进行一点点的尝试后发现了问题的根源所在。</a></p>
+<p>​        出现这个问题的原因是在读取数据之前没有进行过flash的写入操作。通俗点就是，你没动过flash而直接读取是不行的。只要写入一次数据后，就可以任意的读了，不管写入的啥，只要有一次写入操作后，就不会出现延时失效的问题了。当然，为啥空白芯片必须先写入才能读取，我也不知道为啥。可能是相关的寄存器需要操作才能打开flash，感觉就像串口中的读取SR和DR寄存器会自动清除中断差不多。</p>
+<p><img src="/2020/05/18/STM32-Flash/1.png" alt="1"></p>
+<p>​        具体原因还需要进一步查阅手册，才能找到。</p>
 
       
     </div>
